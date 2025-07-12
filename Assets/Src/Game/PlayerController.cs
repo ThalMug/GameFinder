@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class CameraController : MonoBehaviour
 {
@@ -22,6 +23,9 @@ public class CameraController : MonoBehaviour
 
     private void HandleMouseInput()
     {
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            return;
+        
         if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
             _isMousePressed = true;
         
