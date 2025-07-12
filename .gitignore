@@ -71,3 +71,26 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+
+# Rider logs / settings
+*.DotSettings.user
+
+# Unity logs
+*.log
+
+# Unity default theme / UI Toolkit junk
+Assets/UI Toolkit/*
+Assets/UI Toolkit.meta
+Assets/UnityDefaultRuntimeTheme.tss
+Assets/UnityDefaultRuntimeTheme.tss.meta
+
+# Meta files from ignored files
+*.csproj.meta
+*.sln.meta
+*.user.meta
+*.tmp.meta
+*.log.meta

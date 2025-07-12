@@ -22,13 +22,13 @@ public class CameraController : MonoBehaviour
 
     private void HandleMouseInput()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
             _isMousePressed = true;
         
-        if (Input.GetMouseButton(0) && _isMousePressed)
+        if ((Input.GetMouseButton(0) || Input.GetMouseButton(1)) && _isMousePressed)
             UpdateRotation();
 
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(0))
             _isMousePressed = false;
     }
 
