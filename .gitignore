@@ -94,3 +94,12 @@ Assets/UnityDefaultRuntimeTheme.tss.meta
 *.user.meta
 *.tmp.meta
 *.log.meta
+
+# TextMesh Pro auto-generated files
+Assets/TextMesh Pro/
+
+# Ne pas tracker TextMesh Pro
+Assets/TextMesh Pro/
+Assets/TextMesh Pro.meta
+
+.idea/
