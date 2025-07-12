@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class TextBoxUI : MonoBehaviour
+public class WordInputView : MonoBehaviour
 {
     void Start()
     {
