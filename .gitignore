@@ -74,7 +74,9 @@ crashlytics-build.properties
 
 # Rider / JetBrains
 .idea/
-*.sln.iml
+*.iml
+*.DotSettings
+
 
 # Rider logs / settings
 *.DotSettings.user
