@@ -2,6 +2,6 @@
 {
     public class GamePhaseData
     {
-        public string[] expectedAnswers;
+        public static string[] expectedAnswers = {"The Witcher 3", "The Witcher"};
     }
 }

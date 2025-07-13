@@ -21,11 +21,17 @@ namespace Src.GameSates
         
         public void Enter(Action onComplete)
         {
+            _uiController.ShowTextBox();
             _onComplete = onComplete;
+
+            WordInputView.OnWordSubmitted += OnWordSubmitted;
         }
 
         public void Exit()
         {
+            _uiController.HideTextBox();
+            
+            WordInputView.OnWordSubmitted -= OnWordSubmitted;
             Debug.LogError("exiting");
         }
 
@@ -37,13 +43,14 @@ namespace Src.GameSates
             }
             else
             {
+                _uiController.EmptyTextBox();
                 Debug.LogError("Wrong word");
             }
         }
         
         private bool IsCorrect(string input)
         {
-            return _data.expectedAnswers.Any(answer =>
+            return GamePhaseData.expectedAnswers.Any(answer =>
                 string.Equals(answer.Trim(), input.Trim(), StringComparison.OrdinalIgnoreCase));
         }
 

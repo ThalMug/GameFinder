@@ -1,13 +1,12 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using TMPro;
-using UnityEngine.UI;
 
 public class WordInputView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    [SerializeField] private TMP_InputField inputField;
+    [SerializeField] public TMP_InputField inputField;
 
-    public event System.Action<string> OnWordSubmitted;
+    public static event System.Action<string> OnWordSubmitted;
 
     private Vector3 baseScale;
     private Vector3 targetScale;
@@ -57,10 +56,5 @@ public class WordInputView : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public void Hide()
     {
         gameObject.SetActive(false);
-    }
-
-    public void ClearListeners()
-    {
-        OnWordSubmitted = null;
     }
 }
