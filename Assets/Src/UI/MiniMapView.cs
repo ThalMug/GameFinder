@@ -40,10 +40,20 @@ public class MiniMapView : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             HandlePan();
             HandleZoom();
         }
+
+        if (_isExpanded && Input.GetMouseButtonDown(0) && !IsMouseInside())
+        {
+            _isExpanded = false;
+            _targetSize = normalSize;
+        }
         
+        if (Input.GetMouseButtonUp(0))
+            _isDragging = false;
+
         if (!_isDragging)
             ClampBackSmoothly();
     }
+
 
     public void OnPointerEnter(PointerEventData eventData)
     {
@@ -59,10 +69,10 @@ public class MiniMapView : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (eventData.button == PointerEventData.InputButton.Left)
+        if (eventData.button == PointerEventData.InputButton.Left && !_isExpanded && IsMouseInside())
         {
-            _isExpanded = !_isExpanded;
-            _targetSize = _isExpanded ? expandedSize : normalSize;
+            _isExpanded = true;
+            _targetSize = expandedSize;
         }
         else if (eventData.button == PointerEventData.InputButton.Right && _isExpanded)
         {
@@ -100,17 +110,16 @@ public class MiniMapView : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     {
         if (!_isExpanded) return;
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && IsMouseInside())
             _isDragging = true;
-        if (Input.GetMouseButtonUp(0))
-            _isDragging = false;
 
         if (_isDragging)
         {
             Vector3 delta = new Vector3(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"), 0);
-            mapImage.anchoredPosition += (Vector2)delta * 10f;
+            mapImage.anchoredPosition += (Vector2)delta * panSpeed;
         }
     }
+
 
     
     private void ClampBackSmoothly()
