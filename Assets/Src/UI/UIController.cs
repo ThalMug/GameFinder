@@ -1,25 +1,37 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Src.UI
 {
     public class UIController : MonoBehaviour
     {
-        [SerializeField] private WordInputView TextBox;
+        [SerializeField] private WordInputView textBox;
+        [SerializeField] private MiniMapView miniMap;
 
         public void ShowTextBox()
         {
-            TextBox.Show();
+            textBox.Show();
             EmptyTextBox();
         }
 
         public void HideTextBox()
         {
-            TextBox.Hide();
+            textBox.Hide();
         }
 
         public void EmptyTextBox()
         {
-            TextBox.inputField.text = "";
+            textBox.inputField.text = "";
+        }
+
+        public void HideMap()
+        {
+            miniMap.Hide();
+        }
+
+        public void ShowMap()
+        {
+            miniMap.Show();
         }
     }
 }

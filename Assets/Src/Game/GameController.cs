@@ -1,36 +1,91 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Src.GameSates;
 using Src.UI;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Src.Game
 {
     public class GameController : MonoBehaviour
     {
-        private List<IGameState> _gameStates;
-        private IGameState _currentGameState;
-        
+        [Header("Deps")]
         [SerializeField] private UIController uiController;
-        [SerializeField] private GamePhaseData _data;
-        
-        public GameController(List<IGameState> gameStates)
+        [SerializeField] private GamePhaseData data;
+
+        [Header("Flow")]
+        [SerializeField] private bool autoStart = true;
+
+        public bool IsPlaying { get; private set; }
+        public event Action OnGameComplete;
+
+        private readonly List<IGameState> _states = new();
+        private IGameState _current;
+        private int _index = -1;
+
+        private void Awake()
         {
-            _gameStates = gameStates;
+            if (autoStart)
+                StartGame();
         }
 
-        public void Awake()
+        public void StartGame()
         {
-            _gameStates = new() { new GuessWordState(_data, uiController) };
-            _currentGameState = _gameStates.First();
-            _currentGameState.Enter(OnFinished);
+            if (uiController == null )//|| data == null)
+            {
+                Debug.LogError("[GameController] Missing dependencies (uiController/data).");
+                return;
+            }
+
+            CleanupCurrent();
+            _states.Clear();
+
+            _states.Add(new GuessWordState(data, uiController));
+            _states.Add(new GuessLocationState(data, uiController));
+
+            _index = -1;
+            IsPlaying = false;
+
+            EnterNextState();
         }
 
-        private void OnFinished()
+        private void EnterNextState()
         {
-            _currentGameState.Exit();
+            _current?.Exit();
+
+            _index++;
+            if (_index >= _states.Count)
+            {
+                _current = null;
+                IsPlaying = false;
+                OnGameComplete?.Invoke();
+                return;
+            }
+
+            _current = _states[_index];
+            IsPlaying = true;
+
+            _current.Enter(EnterNextState);
+        }
+
+        private void OnDestroy()
+        {
+            CleanupCurrent();
+        }
+
+        private void CleanupCurrent()
+        {
+            try
+            {
+                _current?.Exit();
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+            finally
+            {
+                _current = null;
+            }
         }
     }
 }

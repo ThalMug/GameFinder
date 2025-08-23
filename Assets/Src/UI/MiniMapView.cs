@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class MiniMapView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
@@ -17,18 +18,30 @@ public class MiniMapView : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     [Header("Settings")]
     [SerializeField] private float sizeLerpSpeed = 10f;
-    [SerializeField] private float panSpeed = 10f;
+    [SerializeField] private float panSpeed = 100f;
     [SerializeField] private float minZoom = 0.5f;
     [SerializeField] private float maxZoom = 3f;
 
+    [SerializeField] public GameObject bottomButton;
+
+    public static event Action OnPositionSelected;
+    public bool isExpanded => _isExpanded;
+    public bool isPointerInsideMiniMap =>
+        RectTransformUtility.RectangleContainsScreenPoint(containerRect, Input.mousePosition, canvas.worldCamera);
+
+    
     private Vector2 _targetSize;
-    private bool _isExpanded = false;
-    private bool _isDragging = false;
+    private bool _isExpanded;
+    private bool _isDragging;
+    private RectTransform _markerInstance;
+    private Vector2? _savedNorm;
 
     private void Awake()
     {
         _targetSize = normalSize;
         containerRect.sizeDelta = _targetSize;
+        EnsureMinZoomAndClamp();
+        gameObject.SetActive(false);
     }
 
     private void Update()
@@ -45,6 +58,7 @@ public class MiniMapView : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         {
             _isExpanded = false;
             _targetSize = normalSize;
+            if (bottomButton != null) bottomButton.SetActive(false);
         }
         
         if (Input.GetMouseButtonUp(0))
@@ -73,6 +87,7 @@ public class MiniMapView : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         {
             _isExpanded = true;
             _targetSize = expandedSize;
+            if (bottomButton != null) bottomButton.SetActive(true);
         }
         else if (eventData.button == PointerEventData.InputButton.Right && _isExpanded)
         {
@@ -80,12 +95,25 @@ public class MiniMapView : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         }
     }
 
+    public void OnSubmit()
+    {
+        OnPositionSelected?.Invoke();
+    }
+
     private void PlaceMarker(PointerEventData eventData)
     {
-        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(mapImage, eventData.position, canvas.worldCamera, out Vector2 localPoint))
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                mapImage, eventData.position, canvas.worldCamera, out var localPoint))
         {
-            RectTransform marker = Instantiate(markerPrefab, markerContainer);
-            marker.anchoredPosition = localPoint;
+            if (_markerInstance == null)
+                _markerInstance = Instantiate(markerPrefab, markerContainer);
+
+            _markerInstance.anchorMin = _markerInstance.anchorMax = new Vector2(0.5f, 0.5f);
+            _markerInstance.pivot = new Vector2(0.5f, 0.5f);
+            _markerInstance.localScale = Vector3.one;
+            _markerInstance.anchoredPosition = localPoint;
+
+            _savedNorm = LocalToNorm(localPoint);
         }
     }
     
@@ -97,13 +125,29 @@ public class MiniMapView : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     private void HandleZoom()
     {
         float scroll = Input.GetAxis("Mouse ScrollWheel");
-        if (scroll != 0f)
-        {
-            Vector3 newScale = mapImage.localScale + Vector3.one * scroll;
-            newScale = Vector3.Max(newScale, Vector3.one * minZoom);
-            newScale = Vector3.Min(newScale, Vector3.one * maxZoom);
-            mapImage.localScale = newScale;
-        }
+        if (Mathf.Approximately(scroll, 0f)) return;
+
+        float target = mapImage.localScale.x + scroll;
+        float minCover = GetMinZoomToCover();
+        target = Mathf.Clamp(target, minCover, maxZoom);
+
+        mapImage.localScale = Vector3.one * target;
+
+        ClampBackSmoothly();
+        if (_savedNorm.HasValue) ApplyMarkerFromNormalized(_savedNorm.Value);
+    }
+
+    
+    private Vector2 LocalToNorm(Vector2 local)
+    {
+        Vector2 sz = mapImage.rect.size;
+        return new Vector2(local.x / sz.x + 0.5f, local.y / sz.y + 0.5f);
+    }
+
+    private Vector2 NormToLocal(Vector2 norm)
+    {
+        Vector2 sz = mapImage.rect.size;
+        return new Vector2((norm.x - 0.5f) * sz.x, (norm.y - 0.5f) * sz.y);
     }
 
     private void HandlePan()
@@ -120,6 +164,57 @@ public class MiniMapView : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         }
     }
 
+    private void OnRectTransformDimensionsChange()
+    {
+        EnsureMinZoomAndClamp();
+    }
+
+    private void ApplyMarkerFromNormalized(Vector2 norm)
+    {
+        Vector2 local = NormToLocal(norm);
+
+        if (_markerInstance == null)
+            _markerInstance = Instantiate(markerPrefab, markerContainer);
+
+        _markerInstance.anchorMin = _markerInstance.anchorMax = new Vector2(0.5f, 0.5f);
+        _markerInstance.pivot = new Vector2(0.5f, 0.5f);
+        _markerInstance.localScale = Vector3.one;
+        _markerInstance.anchoredPosition = local;
+    }
+    
+    private float GetMinZoomToCover()
+    {
+        Vector2 containerSize = containerRect.rect.size;
+        Vector2 baseMapSize   = mapImage.rect.size;
+
+        if (baseMapSize.x <= 0f || baseMapSize.y <= 0f) return minZoom;
+
+        float sx = containerSize.x / baseMapSize.x;
+        float sy = containerSize.y / baseMapSize.y;
+
+        return Mathf.Max(sx, sy, minZoom);
+    }
+
+    private void EnsureMinZoomAndClamp()
+    {
+        float minCover = GetMinZoomToCover();
+        float clamped  = Mathf.Clamp(mapImage.localScale.x, minCover, maxZoom);
+        mapImage.localScale = Vector3.one * clamped;
+
+        ClampBackSmoothly();
+        if (_savedNorm.HasValue) ApplyMarkerFromNormalized(_savedNorm.Value);
+    }
+    
+    public void Show()
+    {
+        gameObject.SetActive(true);
+        _markerInstance = null;
+    }
+
+    public void Hide()
+    {
+        gameObject.SetActive(false);
+    }
 
     
     private void ClampBackSmoothly()
@@ -129,8 +224,10 @@ public class MiniMapView : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
         Vector2 maxOffset = (mapSize - containerSize) / 2f;
 
-        Vector2 pos = mapImage.anchoredPosition;
+        maxOffset.x = Mathf.Max(0f, maxOffset.x);
+        maxOffset.y = Mathf.Max(0f, maxOffset.y);
 
+        Vector2 pos = mapImage.anchoredPosition;
         float smoothing = 5f * Time.deltaTime;
 
         float targetX = Mathf.Clamp(pos.x, -maxOffset.x, maxOffset.x);
