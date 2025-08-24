@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Src.GameSates;
 using Src.UI;
+using UnityEditorInternal;
 using UnityEngine;
 
 namespace Src.Game
@@ -41,6 +42,7 @@ namespace Src.Game
 
             _states.Add(new GuessWordState(data, uiController));
             _states.Add(new GuessLocationState(data, uiController));
+            _states.Add(new ResultState(data, uiController));
 
             _index = -1;
             IsPlaying = false;

@@ -33,28 +33,10 @@ namespace Src.GameSates
             Debug.LogError("exiting");
         }
 
-        private void OnWordSubmitted(string inputWord)
-        {
-            if (IsCorrect(inputWord))
-            {
-                _onComplete?.Invoke();
-            }
-            else
-            {
-                _uiController.EmptyTextBox();
-                Debug.LogError("Wrong word");
-            }
-        }
-        
-        private bool IsCorrect(string input)
-        {
-            return GamePhaseData.expectedAnswers.Any(answer =>
-                string.Equals(answer.Trim(), input.Trim(), StringComparison.OrdinalIgnoreCase));
-        }
 
         private void OnPositionSelected()
         {
-            
+            _onComplete?.Invoke();
         }
     }
 }

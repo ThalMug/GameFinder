@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class MiniMapView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
@@ -22,7 +23,7 @@ public class MiniMapView : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     [SerializeField] private float minZoom = 0.5f;
     [SerializeField] private float maxZoom = 3f;
 
-    [SerializeField] public GameObject bottomButton;
+    [SerializeField] private Button bottomButton;
 
     public static event Action OnPositionSelected;
     public bool isExpanded => _isExpanded;
@@ -41,7 +42,8 @@ public class MiniMapView : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         _targetSize = normalSize;
         containerRect.sizeDelta = _targetSize;
         EnsureMinZoomAndClamp();
-        gameObject.SetActive(false);
+        bottomButton = GetComponentInChildren<Button>();
+        bottomButton.onClick.AddListener(OnSubmit);
     }
 
     private void Update()
@@ -58,7 +60,7 @@ public class MiniMapView : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         {
             _isExpanded = false;
             _targetSize = normalSize;
-            if (bottomButton != null) bottomButton.SetActive(false);
+            if (bottomButton != null) bottomButton.enabled = false;
         }
         
         if (Input.GetMouseButtonUp(0))
@@ -87,7 +89,7 @@ public class MiniMapView : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         {
             _isExpanded = true;
             _targetSize = expandedSize;
-            if (bottomButton != null) bottomButton.SetActive(true);
+            if (bottomButton != null) bottomButton.enabled = true;
         }
         else if (eventData.button == PointerEventData.InputButton.Right && _isExpanded)
         {
