@@ -6,26 +6,26 @@ using UnityEngine;
 
 namespace Src.GameSates
 {
-    public class GuessLocationState : IGameState
+    public class GuessLocationStep : IGameStep
     {
         private readonly UIController _uiController;
-        private readonly GamePhaseData _data;
+        private readonly GameSequenceData _data;
         private Action _onComplete;
         
-        public GuessLocationState(GamePhaseData data, UIController uiController)
+        public GuessLocationStep(GameSequenceData data, UIController uiController)
         {
             _data = data;
             _uiController = uiController;
         }
         
-        public void Enter(Action onComplete)
+        public void StartStep(Action onComplete)
         {
             _uiController.ShowMap();
             _onComplete = onComplete;
             MiniMapView.OnPositionSelected += OnPositionSelected;
         }
 
-        public void Exit()
+        public void CompleteStep()
         {
             _uiController.HideMap();
             MiniMapView.OnPositionSelected -= OnPositionSelected;

@@ -5,25 +5,25 @@ using UnityEngine;
 
 namespace Src.GameSates
 {
-    public class ResultState : IGameState
+    public class ResultStep : IGameStep
     {
         private readonly UIController _uiController;
-        private readonly GamePhaseData _data;
+        private readonly GameSequenceData _data;
         private Action _onComplete;
         
-        public ResultState(GamePhaseData data, UIController uiController)
+        public ResultStep(GameSequenceData data, UIController uiController)
         {
             _data = data;
             _uiController = uiController;
         }
         
-        public void Enter(Action onComplete)
+        public void StartStep(Action onComplete)
         {
             Sprite mapSprite = Resources.Load<Sprite>("background"); 
-            _uiController.ShowResults(mapSprite, new Vector2(0,0), GamePhaseData.p2);
+            //_uiController.ShowResults(mapSprite, new Vector2(0,0), GamePhaseData.p2);
         }
 
-        public void Exit()
+        public void CompleteStep()
         {
             throw new NotImplementedException();
         }

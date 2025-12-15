@@ -6,20 +6,20 @@ using UnityEngine;
 
 namespace Src.GameSates
 {
-    public class GuessWordState : IGameState
+    public class GuessWordStep : IGameStep
     {
         
         private readonly UIController _uiController;
-        private readonly GamePhaseData _data;
+        private readonly GameSequenceData _data;
         private Action _onComplete;
         
-        public GuessWordState(GamePhaseData data, UIController uiController)
+        public GuessWordStep(GameSequenceData data, UIController uiController)
         {
             _data = data;
             _uiController = uiController;
         }
         
-        public void Enter(Action onComplete)
+        public void StartStep(Action onComplete)
         {
             _uiController.ShowTextBox();
             _onComplete = onComplete;
@@ -27,7 +27,7 @@ namespace Src.GameSates
             WordInputView.OnWordSubmitted += OnWordSubmitted;
         }
 
-        public void Exit()
+        public void CompleteStep()
         {
             _uiController.HideTextBox();
             
@@ -50,8 +50,11 @@ namespace Src.GameSates
         
         private bool IsCorrect(string input)
         {
+            /*
             return GamePhaseData.expectedAnswers.Any(answer =>
                 string.Equals(answer.Trim(), input.Trim(), StringComparison.OrdinalIgnoreCase));
+                */
+            return false;
         }
 
     }
