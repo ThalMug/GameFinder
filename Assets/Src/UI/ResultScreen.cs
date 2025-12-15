@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,7 +10,9 @@ public class ResultScreen : MonoBehaviour
     [SerializeField] private RectTransform mapImage;        
     [SerializeField] private RectTransform markerContainer; 
     [SerializeField] private RectTransform markerPrefab;    
-    [SerializeField] private Button closeButton;            
+    [SerializeField] private Button closeButton;
+
+    public event Action OnResultScreenClosed;
 
     private RectTransform _m1, _m2;
 
@@ -44,7 +47,11 @@ public class ResultScreen : MonoBehaviour
         gameObject.SetActive(true);
     }
 
-    public void Hide() => gameObject.SetActive(false);
+    public void Hide()
+    {
+        OnResultScreenClosed?.Invoke();  
+        gameObject.SetActive(false);
+    }
 
 
     private void SetupMarker(RectTransform m, Vector2 local)

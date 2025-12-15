@@ -20,7 +20,7 @@ namespace Src.GameSates
         
         public void StartStep(Action onComplete)
         {
-            _uiController.ShowMap();
+            _uiController.ShowMap(_data);
             _onComplete = onComplete;
             MiniMapView.OnPositionSelected += OnPositionSelected;
         }

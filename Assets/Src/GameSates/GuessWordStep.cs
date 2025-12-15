@@ -50,12 +50,8 @@ namespace Src.GameSates
         
         private bool IsCorrect(string input)
         {
-            /*
-            return GamePhaseData.expectedAnswers.Any(answer =>
+            return _data.expectedAnswers.Any(answer =>
                 string.Equals(answer.Trim(), input.Trim(), StringComparison.OrdinalIgnoreCase));
-                */
-            return false;
         }
-
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Src.Game;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -11,6 +12,7 @@ public class MiniMapView : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     [SerializeField] private RectTransform markerPrefab;
     [SerializeField] private RectTransform markerContainer;
     [SerializeField] private Canvas canvas;
+    [SerializeField] private Image image;
 
     [Header("Sizes")]
     [SerializeField] private Vector2 normalSize = new Vector2(200, 200);
@@ -207,8 +209,9 @@ public class MiniMapView : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         if (_savedNorm.HasValue) ApplyMarkerFromNormalized(_savedNorm.Value);
     }
     
-    public void Show()
+    public void Show(GameSequenceData data)
     {
+        image.sprite = data.mapSprite;
         gameObject.SetActive(true);
         _markerInstance = null;
     }

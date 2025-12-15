@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using Src.Game;
+using UnityEngine;
 using UnityEngine.Serialization;
 
 namespace Src.UI
@@ -8,6 +10,8 @@ namespace Src.UI
         [SerializeField] private WordInputView textBox;
         [SerializeField] private MiniMapView miniMap;
         [SerializeField] private ResultScreen resultScreen;
+
+        public event Action OnResultScreenClosed; 
 
         public void ShowTextBox()
         {
@@ -30,19 +34,22 @@ namespace Src.UI
             miniMap.Hide();
         }
 
-        public void ShowMap()
+        public void ShowMap(GameSequenceData data)
         {
-            miniMap.Show();
+            miniMap.Show(data);
         }
 
         public void ShowResults(Sprite mapSprite, Vector2 marker1Norm, Vector2 marker2Norm)
         {
             resultScreen.Show(mapSprite, marker1Norm, marker2Norm);
+            resultScreen.OnResultScreenClosed += HideResults;
         }
 
         public void HideResults()
         {
+            resultScreen.OnResultScreenClosed -= HideResults;
             resultScreen.Hide();
+            OnResultScreenClosed?.Invoke();
         }
     }
 }

@@ -19,13 +19,15 @@ namespace Src.GameSates
         
         public void StartStep(Action onComplete)
         {
-            Sprite mapSprite = Resources.Load<Sprite>("background"); 
-            //_uiController.ShowResults(mapSprite, new Vector2(0,0), GamePhaseData.p2);
+            _onComplete = onComplete;
+            _uiController.ShowResults(_data.mapSprite, new Vector2(0,0), _data.positionToMinimap);
+            _uiController.OnResultScreenClosed += CompleteStep;
         }
 
         public void CompleteStep()
         {
-            throw new NotImplementedException();
+            _uiController.OnResultScreenClosed -= CompleteStep;
+            _onComplete?.Invoke();
         }
     }
 }
