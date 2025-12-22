@@ -1,34 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Numerics;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace DTO
 {
-    [Serializable]
-    public class GuessSequencePackDto
+    [System.Serializable]
+    public class SequencesFileDTO
     {
-        public string packId;
-        public string displayName;
-        public List<GuessSequenceDto> sequences;
-    }
-    
-    [Serializable]
-    public class GuessSequenceDto
-    {
-        public string[] expectedAnswers;
-        public string backgroundSprite;
-        public string mapSprite;
-        public Vector2Dto positionToMinimap;
-        public bool shouldTimerActivate;
-        public string[] steps;
+        public List<SequenceDTO> sequences;
     }
 
-    [Serializable]
-    public class Vector2Dto
+    [System.Serializable]
+    public class SequenceDTO
+    {
+        public string id;
+        public bool shouldTimerActivate;
+        public List<string> expectedAnswers;
+        public string backgroundSprite;
+        public string mapSprite;
+        public PositionDTO positionToMinimap;
+        public List<string> steps;
+    }
+
+    [System.Serializable]
+    public class PositionDTO
     {
         public float x;
         public float y;
-
-        public Vector2 ToVector2() => new Vector2(x, y);
     }
 }

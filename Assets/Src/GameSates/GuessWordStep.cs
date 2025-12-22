@@ -21,6 +21,7 @@ namespace Src.GameSates
         
         public void StartStep(Action onComplete)
         {
+            SkyboxLoader.LoadPanoramicSkybox(_data.BackgroundTexture2D);
             _uiController.ShowTextBox();
             _onComplete = onComplete;
 

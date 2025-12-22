@@ -1,0 +1,29 @@
+﻿{
+  "sequences": [
+    {
+      "id": "the_witcher_3",
+      "shouldTimerActivate": true,
+      "expectedAnswers": ["The Witcher 3"],
+      "backgroundSprite": "TW3_bg.png",
+      "mapSprite": "TW3_map.jpg",
+      "positionToMinimap": { "x": 0.42, "y": 0.78 },
+      "steps": [
+        "guess_word",
+        "guess_location",
+        "result"
+      ]
+    },
+    {
+      "id": "the_witcher_4",
+      "shouldTimerActivate": true,
+      "expectedAnswers": ["The Witcher 4", "TW3"],
+      "backgroundSprite": "TW3_bg.png",
+      "mapSprite": "TW3_map.jpg",
+      "positionToMinimap": { "x": 0.42, "y": 0.78 },
+      "steps": [
+        "guess_word",
+        "guess_location"
+      ]
+    }
+  ]
+}

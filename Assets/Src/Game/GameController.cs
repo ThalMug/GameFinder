@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using DTO;
 using Src.GameSates;
-using Src.Loaders;
 using Src.UI;
 using UnityEditorInternal;
 using UnityEngine;
@@ -12,9 +12,6 @@ namespace Src.Game
     {
         [Header("Deps")]
         [SerializeField] private UIController uiController;
-
-        [Header("Flow")]
-        [SerializeField] private bool autoStart = true;
 
         public int _currentSequenceIndex = -1;
         private List<GameSequence> _gameSequences;
@@ -39,12 +36,7 @@ namespace Src.Game
         
         void Start()
         {
-            var sequences = GameSequencesLoader.LoadPack(
-                "pack1",
-                uiController
-            );
-
-            StartGameSequences(sequences);
+            var sequences = GameSequencesLoader.LoadAll(uiController);
         }
 
         
