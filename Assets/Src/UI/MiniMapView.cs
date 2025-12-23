@@ -218,6 +218,7 @@ public class MiniMapView : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public void Hide()
     {
+        _markerInstance = null;
         gameObject.SetActive(false);
     }
 

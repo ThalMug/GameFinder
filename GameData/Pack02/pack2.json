@@ -17,8 +17,8 @@
       "id": "the_witcher_4",
       "shouldTimerActivate": true,
       "expectedAnswers": ["The Witcher 4", "TW3"],
-      "backgroundSprite": "TW3_bg.png",
-      "mapSprite": "TW3_map.jpg",
+      "backgroundSprite": "TW4_bg.png",
+      "mapSprite": "TW4_map.jpg",
       "positionToMinimap": { "x": 0.42, "y": 0.78 },
       "steps": [
         "guess_word",

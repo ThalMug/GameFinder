@@ -11,7 +11,12 @@ namespace Src.UI
         [SerializeField] private MiniMapView miniMap;
         [SerializeField] private ResultScreen resultScreen;
 
-        public event Action OnResultScreenClosed; 
+        public event Action OnResultScreenClosed;
+
+        public void OnEnable()
+        {
+            DontDestroyOnLoad(this);
+        }
 
         public void ShowTextBox()
         {

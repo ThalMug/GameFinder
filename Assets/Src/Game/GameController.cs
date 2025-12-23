@@ -37,6 +37,8 @@ namespace Src.Game
         void Start()
         {
             var sequences = GameSequencesLoader.LoadAll(uiController);
+            var sequenceToLoad = sequences["pack2.json"];
+            StartGameSequences(sequenceToLoad);
         }
 
         

@@ -11,6 +11,8 @@ namespace Src.Game
 
         private int _currentStepIndex = -1;
 
+        public bool IsCompleted;
+        
         public event Action OnSequenceCompleted;
 
         private IGameStep currentStep =>
@@ -26,15 +28,18 @@ namespace Src.Game
 
         public void StartNextStep()
         {
-            _currentStepIndex++;
-
-            if (_currentStepIndex >= _gameSteps.Count)
+            if (_currentStepIndex + 1 >= _gameSteps.Count)
             {
+                IsCompleted = true;
                 OnSequenceCompleted?.Invoke();
                 return;
             }
+            
+            currentStep?.CompleteStep();
+            _currentStepIndex++;
+            
 
-            currentStep.StartStep(StartNextStep);
+            currentStep?.StartStep(StartNextStep);
         }
     }
 }
